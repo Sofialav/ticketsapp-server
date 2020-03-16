@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const user = require("./user/model");
-const db = require("./db");
+const userRouter = require("./user/router");
+const eventRouter = require("./event/router");
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -10,5 +10,7 @@ const parserMW = express.json();
 
 app.use(corsMW);
 app.use(parserMW);
+app.use(userRouter);
+app.use(eventRouter);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
