@@ -5,7 +5,7 @@ const User = db.define("user", {
   login: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true
+    unique: { args: true, msg: "Username already in use!" }
   },
   password: {
     type: Sequelize.STRING,
@@ -14,9 +14,10 @@ const User = db.define("user", {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
-    validate: { isEmail: true }
-    // CHECK VALIDATION
+    validate: {
+      isEmail: { args: true, msg: "Please provide valid email!" }
+    },
+    unique: { args: true, msg: "Email address already in use!" }
   }
 });
 
