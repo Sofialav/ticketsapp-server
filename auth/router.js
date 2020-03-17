@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const bcrypt = require("bcrypt");
-const { toJWT, toData } = require("./jwt");
+const { toJWT } = require("./jwt");
 const User = require("../user/model");
 const auth = require("./middleware");
 
@@ -10,7 +10,7 @@ router.post("/login", async (req, res, next) => {
   try {
     if (!req.body.login || !req.body.password) {
       res.status(400).send({
-        message: "Please supply a valid login and password"
+        message: "Please supply valid login and password"
       });
     } else {
       const entity = await User.findOne({ where: { login: req.body.login } });
