@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const Sequelize = require("sequelize");
 const router = new Router();
 const bcrypt = require("bcrypt");
 const User = require("./model");
@@ -17,6 +18,10 @@ router.post("/users", async (req, res, next) => {
       return res.json(userPost);
     }
   } catch (error) {
+    if (Sequelize.ValidationError) {
+      const message = error.errors.map(error => error.message);
+      res.status(400).json(message);
+    }
     next(error);
   }
 });
