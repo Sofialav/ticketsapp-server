@@ -17,10 +17,17 @@ router.get("/events", (req, res, next) => {
     .catch(next);
 });
 // create a new event
-router.post("/events", (req, res, next) => {
-  Event.create(req.body)
-    .then(event => res.status(201).json(event))
-    .catch(next);
+router.post("/events", async (req, res, next) => {
+  try {
+    if (!req.body.name) {
+      return req.status(400).send("Please supply event name!");
+    } else {
+      const newEvent = await Event.create(req.body);
+      return res.json(newEvent);
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

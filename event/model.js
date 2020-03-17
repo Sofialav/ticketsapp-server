@@ -14,7 +14,7 @@ const Event = db.define("event", {
   end_date: {
     type: Sequelize.DATE,
     allowNull: false,
-    defaultValue: this.start_date,
+    defaultValue: Sequelize.NOW,
     validate: {
       isGreaterThanStartDate(value) {
         if (value <= this.start_date) {
