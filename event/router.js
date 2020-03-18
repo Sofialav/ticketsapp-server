@@ -29,5 +29,18 @@ router.post("/events", async (req, res, next) => {
     next(error);
   }
 });
+// get event by ID
+router.get("/events/:eventId", async (req, res, next) => {
+  try {
+    const event = await Event.findByPk(req.params.eventId);
+    if (event) {
+      return res.status(200).json(event);
+    } else {
+      return res.status(404).send("Event does not exist");
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
