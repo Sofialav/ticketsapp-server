@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const router = new Router();
 const Ticket = require("./model");
+const User = require("../user/model");
+const Event = require("../event/model");
 
 // add ticket
 router.post("/tickets", async (req, res, next) => {
@@ -13,6 +15,21 @@ router.post("/tickets", async (req, res, next) => {
     } else {
       const newTicket = await Ticket.create(req.body);
       return res.json(newTicket);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+// get ticket by ID
+router.get("/tickets/:ticketId", async (req, res, next) => {
+  try {
+    const ticket = await Ticket.findByPk(req.params.ticketId, {
+      include: [User, Event]
+    });
+    if (ticket) {
+      return res.status(200).json(ticket);
+    } else {
+      return res.status(404).send("Ticket does not exist");
     }
   } catch (error) {
     next(error);

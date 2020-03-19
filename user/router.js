@@ -29,17 +29,14 @@ router.post("/users", async (req, res, next) => {
 // get user by ID
 router.get("/users/:userId", async (req, res, next) => {
   try {
-    if (!req.params.userId) {
-      return res.status(400).send("Please supply user ID!");
+    const user = await User.findByPk(req.params.userId, {
+      attributes: { exclude: ["password"] },
+      include: [Ticket]
+    });
+    if (user) {
+      return res.status(200).json(user);
     } else {
-      const user = await User.findByPk(req.params.userId, {
-        include: [Ticket]
-      });
-      if (user) {
-        return res.status(200).json(user);
-      } else {
-        return res.status(404).send("User does not exist");
-      }
+      return res.status(404).send("User does not exist");
     }
   } catch (error) {
     next(error);
