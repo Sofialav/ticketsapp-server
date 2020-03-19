@@ -7,7 +7,7 @@ router.post("/tickets", async (req, res, next) => {
   // NEED TO ADD WRONG ID VALIDATION
   try {
     if (!req.body.price) {
-      return req.status(400).send("Please supply ticket price!");
+      return res.status(400).send("Please supply ticket price!");
     } else if (!req.body.eventId || !req.body.userId) {
       return res.status(400).send("Please supply event and user ownership");
     } else {
@@ -18,4 +18,5 @@ router.post("/tickets", async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = router;

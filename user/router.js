@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const router = new Router();
 const bcrypt = require("bcrypt");
 const User = require("./model");
+const Ticket = require("../ticket/model");
 
 router.post("/users", async (req, res, next) => {
   try {
@@ -22,6 +23,25 @@ router.post("/users", async (req, res, next) => {
       const message = error.errors.map(error => error.message);
       res.status(400).json(message);
     }
+    next(error);
+  }
+});
+// get user by ID
+router.get("/users/:userId", async (req, res, next) => {
+  try {
+    if (!req.params.userId) {
+      return res.status(400).send("Please supply user ID!");
+    } else {
+      const user = await User.findByPk(req.params.userId, {
+        include: [Ticket]
+      });
+      if (user) {
+        return res.status(200).json(user);
+      } else {
+        return res.status(404).send("User does not exist");
+      }
+    }
+  } catch (error) {
     next(error);
   }
 });
