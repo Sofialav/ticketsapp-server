@@ -3,6 +3,7 @@ const router = new Router();
 const Ticket = require("./model");
 const User = require("../user/model");
 const Event = require("../event/model");
+const Comment = require("../comment/model");
 
 // add ticket
 router.post("/tickets", async (req, res, next) => {
@@ -30,7 +31,8 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
           attributes: { exclude: ["password", "email"] },
           required: false
         },
-        Event
+        Event,
+        Comment
       ]
     });
     if (ticket) {

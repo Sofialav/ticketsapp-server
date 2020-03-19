@@ -4,6 +4,7 @@ const router = new Router();
 const bcrypt = require("bcrypt");
 const User = require("./model");
 const Ticket = require("../ticket/model");
+const Comment = require("../comment/model");
 
 router.post("/users", async (req, res, next) => {
   try {
@@ -31,7 +32,7 @@ router.get("/users/:userId", async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.userId, {
       attributes: { exclude: ["password"] },
-      include: [Ticket]
+      include: [Ticket, Comment]
     });
     if (user) {
       return res.status(200).json(user);
