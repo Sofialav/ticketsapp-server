@@ -24,7 +24,14 @@ router.post("/tickets", async (req, res, next) => {
 router.get("/tickets/:ticketId", async (req, res, next) => {
   try {
     const ticket = await Ticket.findByPk(req.params.ticketId, {
-      include: [User, Event]
+      include: [
+        {
+          model: User,
+          attributes: { exclude: ["password", "email"] },
+          required: false
+        },
+        Event
+      ]
     });
     if (ticket) {
       return res.status(200).json(ticket);
