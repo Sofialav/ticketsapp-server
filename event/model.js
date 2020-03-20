@@ -3,7 +3,11 @@ const db = require("../db");
 const User = require("../user/model");
 
 const Event = db.define("event", {
-  name: { type: Sequelize.STRING, allowNull: false },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: { args: true, msg: "Event with this name exist!" }
+  },
   description: { type: Sequelize.TEXT },
   logo: Sequelize.STRING,
   start_date: {
@@ -24,7 +28,6 @@ const Event = db.define("event", {
     }
   }
 });
-
 Event.belongsTo(User);
 
 module.exports = Event;
