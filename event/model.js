@@ -13,8 +13,15 @@ const Event = db.define("event", {
   },
   end_date: {
     type: Sequelize.DATE,
-    allowNull: false
-    // default === start_date
+    allowNull: false,
+    defaultValue: Sequelize.NOW,
+    validate: {
+      isGreaterThanStartDate(value) {
+        if (value <= this.start_date) {
+          throw new Error("End date should not be before start date");
+        }
+      }
+    }
   }
 });
 

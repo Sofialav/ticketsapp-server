@@ -9,7 +9,11 @@ const User = db.define("user", {
   },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      // TO FIX VALIDATION
+      len: { args: 6, msg: "Password length should be at least 6 symbols" }
+    }
   },
   email: {
     type: Sequelize.STRING,
