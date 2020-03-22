@@ -42,10 +42,9 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
       ]
     });
     if (ticket) {
-      // const user = await userRouter.get(`/users/${ticket.userId}`);
       const fraud = await fraudCalc(ticket);
-
-      return res.status(200).json({ ticket, fraud });
+      const finalResult = { ...ticket.dataValues, fraud };
+      return res.status(200).json(finalResult);
     } else {
       return res.status(404).send("Ticket does not exist");
     }
@@ -53,7 +52,7 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
     next(error);
   }
 });
-
+// fraud calculation
 fraudCalc = ticket => {
   let risk = 0;
   // price deduction
