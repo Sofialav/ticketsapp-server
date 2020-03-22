@@ -4,6 +4,8 @@ const Ticket = require("./model");
 const User = require("../user/model");
 const Event = require("../event/model");
 const Comment = require("../comment/model");
+const moment = require("moment");
+const userRouter = require("../user/router");
 
 // add ticket
 router.post("/tickets", async (req, res, next) => {
@@ -28,15 +30,21 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: { exclude: ["password", "email"] },
-          required: false
+          attributes: { exclude: ["password", "email", "updatedAt"] },
+          required: false,
+          include: [{ model: Ticket, attributes: ["id", "price"] }]
         },
-        Event,
+        {
+          model: Event,
+          include: [{ model: Ticket, attributes: ["id", "price"] }]
+        },
         Comment
       ]
     });
     if (ticket) {
-      return res.status(200).json(ticket);
+      const fraud = await fraudCalc(ticket);
+      const finalResult = { ...ticket.dataValues, fraud };
+      return res.status(200).json(finalResult);
     } else {
       return res.status(404).send("Ticket does not exist");
     }
@@ -44,5 +52,44 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
     next(error);
   }
 });
+// fraud calculation
+fraudCalc = ticket => {
+  let risk = 0;
+  // price deduction
+  const allTickets = ticket.event.tickets.map(ticket => ticket.price);
+  const avgPrice =
+    allTickets.reduce((acc, current) => {
+      return acc + current;
+    }) / ticket.event.tickets.length;
+  const ticketPrice = ticket.price;
+  const priceDeduction = (ticketPrice / avgPrice - 1) * 100;
+  if (priceDeduction < 0) {
+    risk += Math.abs(priceDeduction);
+  } else if (priceDeduction > 0 && priceDeduction <= 10) {
+    risk -= priceDeduction;
+  } else risk -= 10;
+  // time deduction
+  let creationTime = parseInt(moment(ticket.createdAt).format("H"));
+  if (creationTime >= 9 && creationTime < 17) {
+    risk -= 10;
+  } else risk += 10;
+  // ticket numbers deduction
+  let userTickets = ticket.user.tickets;
+  if (userTickets.length === 1) {
+    risk += 10;
+  }
+  // comments deduction
+  let comments = ticket.comments.length;
+  if (comments > 3) {
+    risk += 5;
+  }
+  //range 5%-95%
+  if (risk < 5) {
+    risk = 5;
+  } else if (risk > 95) {
+    risk = 95;
+  }
+  return risk;
+};
 
 module.exports = router;
