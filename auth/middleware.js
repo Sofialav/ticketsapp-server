@@ -1,5 +1,7 @@
 const User = require("../user/model");
 const { toData } = require("./jwt");
+const Ticket = require("../ticket/model");
+const Comment = require("../comment/model");
 
 function auth(req, res, next) {
   const auth =
@@ -8,7 +10,10 @@ function auth(req, res, next) {
   if (auth && auth[0] === "Bearer" && auth[1]) {
     try {
       const data = toData(auth[1]);
-      User.findByPk(data.userId)
+      User.findByPk(data.userId, {
+        attributes: ["login", "id"],
+        include: [Ticket, Comment]
+      })
         .then(user => {
           if (!user) return next("User does not exist");
           req.user = user;

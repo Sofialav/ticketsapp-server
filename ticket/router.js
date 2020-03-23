@@ -5,7 +5,6 @@ const User = require("../user/model");
 const Event = require("../event/model");
 const Comment = require("../comment/model");
 const moment = require("moment");
-const userRouter = require("../user/router");
 
 // add ticket
 router.post("/tickets", async (req, res, next) => {
@@ -38,7 +37,10 @@ router.get("/tickets/:ticketId", async (req, res, next) => {
           model: Event,
           include: [{ model: Ticket, attributes: ["id", "price"] }]
         },
-        Comment
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["id", "login"] }]
+        }
       ]
     });
     if (ticket) {

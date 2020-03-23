@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = new Router();
 const Event = require("./model");
 const Ticket = require("../ticket/model");
+const User = require("../user/model");
 const Sequelize = require("sequelize");
 const { gt } = Sequelize.Op;
 
@@ -40,7 +41,9 @@ router.post("/events", async (req, res, next) => {
 router.get("/events/:eventId", async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.eventId, {
-      include: [Ticket]
+      include: [
+        { model: Ticket, include: [{ model: User, attributes: ["login"] }] }
+      ]
     });
     if (event) {
       return res.status(200).json(event);
