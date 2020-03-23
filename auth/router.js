@@ -38,12 +38,10 @@ router.post("/login", async (req, res, next) => {
     });
   }
 });
-// // secret endpoint
-// router.get("/secret-endpoint", auth, (req, res) => {
-//   console.log(req.user);
-//   res.send({
-//     message: `Thanks for visiting the secret endpoint ${req.user.email}.`
-//   });
-// });
+// secret endpoint
+router.get("/users/loggedUser", auth, (req, res) => {
+  console.log(req.user);
+  res.status(200).json(req.user);
+});
 
 module.exports = router;
