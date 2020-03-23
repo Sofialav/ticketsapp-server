@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const User = require("./model");
 const Ticket = require("../ticket/model");
 const Comment = require("../comment/model");
-const auth = require("../auth/middleware");
 
 router.post("/users", async (req, res, next) => {
   try {

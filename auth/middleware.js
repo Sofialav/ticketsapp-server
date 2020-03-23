@@ -11,7 +11,7 @@ function auth(req, res, next) {
     try {
       const data = toData(auth[1]);
       User.findByPk(data.userId, {
-        attributes: ["login"],
+        attributes: ["login", "id"],
         include: [Ticket, Comment]
       })
         .then(user => {
